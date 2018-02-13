@@ -1,0 +1,9 @@
+{
+	"ntuser.dat": "ntuser",
+	"default": "ntuser",
+	"security": "security",
+	"software": "software",
+	"sam": "sam",
+	"system": "system",
+	"usrclass": "usrclass"
+}
