@@ -1,11 +1,22 @@
 RegRipper
 =======
 
+![Last tested in Nuix 7.4](https://img.shields.io/badge/Nuix-7.4-green.svg)
+
+View the GitHub project [here](https://github.com/NuixSDK/Reg-Ripper) or download the latest release [here](https://github.com/NuixSDK/Reg-Ripper/releases).
+
 ## Overview
 The RegRipper script will search a case for relevant registry hive files, export the files, and then pass them to RegRipper for processing.
 
 ## Prerequisites
 Download and extract [RegRipper](https://github.com/keydet89/RegRipper2.8)
+
+## Setup
+
+Begin by downloading the latest release.  Extract the contents of the archive into your Nuix scripts directory.  In Windows the script directory is likely going to be either of the following:
+
+- `%appdata%\Nuix\Scripts` - User level script directory
+- `%programdata%\Nuix\Scripts` - System level script directory
 
 ## Settings
 ### GUI Settings
@@ -39,3 +50,21 @@ The script will also generate a summary report (summary_report.csv) in the outpu
 - **Report file** - Path to the report file.
 - **Hive file** - Path to the hive file used to generate the report.
 - **ItemGuid** - This will can be used to recall the hive file in the Nuix case that was used to generate the report.
+
+# License
+
+```
+Copyright 2018 Nuix
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
