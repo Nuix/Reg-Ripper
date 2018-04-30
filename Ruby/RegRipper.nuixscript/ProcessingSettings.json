@@ -1,0 +1,4 @@
+{
+	"processingSettings" : {"processText" : true},
+	"parallelProcessingSettings" : {"workerCount" : 2}
+}
