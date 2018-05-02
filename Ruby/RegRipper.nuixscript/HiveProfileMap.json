@@ -5,5 +5,6 @@
 	"software": "software",
 	"sam": "sam",
 	"system": "system",
-	"usrclass": "usrclass"
+	"usrclass": "usrclass",
+	"amcache": "amcache"
 }
