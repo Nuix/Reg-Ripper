@@ -1,5 +1,5 @@
-script_directory = File.dirname(__FILE__)
-require File.join(script_directory,"Nx.jar")
+$script_directory = File.dirname(__FILE__)
+require File.join($script_directory,"Nx.jar")
 java_import "com.nuix.nx.NuixConnection"
 java_import "com.nuix.nx.LookAndFeelHelper"
 java_import "com.nuix.nx.dialogs.ChoiceDialog"
@@ -31,8 +31,10 @@ search_query = "mime-type:application/vnd.ms-registry AND NOT name:( sav OR old 
 "(path-name:Windows/AppCompat/Programs AND name:Amcache.hve))"
 
 # Load HiveProfileMap
-hive_profile = JSON.parse(File.read(File.join(script_directory,"HiveProfileMap.json")))
-	
+hive_profile = JSON.parse(File.read(File.join($script_directory,"HiveProfileMap.json")))
+
+$start_time = Time.now
+
 # Setup the dialog
 dialog = TabbedCustomDialog.new
 
@@ -41,6 +43,7 @@ reg_ripper_tab.appendDirectoryChooser("rr_path", "RegRipper Installation Path")
 reg_ripper_tab.appendDirectoryChooser("export_path", "Export Path")
 reg_ripper_tab.appendCheckBox("delete_export", "Delete export on completion?", false)
 reg_ripper_tab.appendDirectoryChooser("output_path", "Output Path")
+reg_ripper_tab.appendCheckBox("ingest_results", "Ingest results on completion?", false)
 
 # Validation
 dialog.validateBeforeClosing do |values|
@@ -117,6 +120,43 @@ def run(command,use_shell=true,working_dir)
 		p.destroy
 	end
 end
+
+def processResults(rr_output_files, pd, main_progress)
+	# Update progress dialog status
+	pd.setMainStatusAndLogIt("Ingesting results: Step 3/3")
+	sub_progress = 0
+	pd.setSubProgress(sub_progress, rr_output_files.size + 1)
+	pd.setSubStatusAndLogIt("Ingesting results...")
+	
+	processing_settings = JSON.parse(File.read(File.join($script_directory,"ProcessingSettings.json")))
+	
+	processor = $currentCase.createProcessor
+	processor.setProcessingSettings(processing_settings["processingSettings"])
+	processor.setParallelProcessingSettings(processing_settings["parallelProcessingSettings"])
+	
+	evidence_container_name = "RegRipper_Results_#{$start_time.strftime("%Y-%m-%d_%H:%M:%S")}"
+	evidence_container_desc = "Results from RegRipper #{$start_time.strftime("%Y-%m-%d_%H:%M:%S")}"
+	evidence_container = processor.newEvidenceContainer(evidence_container_name, {"description" => evidence_container_desc})
+	
+	rr_output_files.each do |file|
+		evidence_container.addFile(file)
+	end
+	
+	evidence_container.save
+	
+	processor.whenItemProcessed do | item |
+		main_progress += 1
+		sub_progress += 1
+		pd.setMainProgress(main_progress)
+		pd.setSubProgress(sub_progress)
+		pd.logMessage("Processed item: #{item.getPath.last}")
+	end
+	
+	processor.process
+	
+	$window.closeAllTabs
+	$window.openTab("workbench",{})
+end
 	
 if dialog.getDialogResult == true
 	input = dialog.toMap
@@ -126,9 +166,13 @@ if dialog.getDialogResult == true
 	export_path = input["export_path"]
 	output_path = input["output_path"]
 	delete_export = input["delete_export"]
+	ingest_results = input["ingest_results"]
 	
 	# Keep track of report files generated to add index to file name in case of duplicate report names
 	report_files = Hash.new
+	
+	# List of RegRipper output files to ingest back into the case if ingesting results
+	rr_output_files = Array.new
 	
 	summary_report = Array.new
 	
@@ -152,10 +196,20 @@ if dialog.getDialogResult == true
 			
 			# 8 export stages + regripper stage
 			# Export stages: native, store_email_fixup, numbering, file_naming, set_file_times, digest, create_production_set, load_files
+			main_progress_max = registry_items.size * 9
+			
+			step_count = 2
+			
+			# Ingestion process will add registry_items.size + 1 for the evidence file
+			if ingest_results
+				main_progress_max += registry_items.size + 1
+				step_count += 1
+			end
+			
 			main_progress = 0
-			pd.setMainProgress(main_progress, registry_items.size * 9)
+			pd.setMainProgress(main_progress, main_progress_max)
 			pd.setMainProgressVisible(true)
-			pd.setMainStatusAndLogIt("Exporting items: Step 1/2")
+			pd.setMainStatusAndLogIt("Exporting items: Step 1/#{step_count}")
 			
 			sub_progress = 0
 			pd.setSubProgress(sub_progress,registry_items.size * 8)
@@ -163,7 +217,7 @@ if dialog.getDialogResult == true
 			pd.setSubStatusAndLogIt("Exporting items...")
 			
 			# Export registry files
-			export_dir = File.join(export_path,"RegRipper_Export_" + Time.now.strftime("%Y%m%d_%H%M%S"))
+			export_dir = File.join(export_path,"RegRipper_Export_" + $start_time.strftime("%Y%m%d_%H%M%S"))
 			FileUtils.mkdir(File.join(export_dir))
 			exporter = $utilities.createBatchExporter(export_dir)
 			exporter.addProduct("native",{"naming" => "item_name_with_path"})
@@ -173,14 +227,23 @@ if dialog.getDialogResult == true
 				sub_progress += 1
 				pd.setMainProgress(main_progress)
 				pd.setSubProgress(sub_progress)
+				if callback.getStageCount == 1
+					pd.logMessage("Started export stage: #{callback.getStage}")
+				elsif callback.getStageCount == registry_items.size
+					pd.logMessage("Finished export stage: #{callback.getStage}")
+				end
 			end
 			exporter.exportItems(registry_items)
 			pd.logMessage("Finished Exporting.")
 			
-			pd.setMainStatusAndLogIt("Generating Reports: Step 2/2")
+			pd.setMainStatusAndLogIt("Generating Reports: Step 2/#{step_count}")
 			sub_progress = 0
 			pd.setSubProgress(sub_progress, registry_items.size)
 			pd.setSubStatusAndLogIt("Generating reports...")
+			
+			# create dated output directory
+			output_path = File.join(output_path, "RegRipper_output_#{$start_time.strftime("%Y%m%d_%H%M%S")}")
+			FileUtils.mkdir(output_path)
 			
 			CSV.foreach(File.join(export_dir,"Report.csv"), {:headers => true, :skip_blanks => true}) do |row|
 				break if pd.abortWasRequested
@@ -231,6 +294,7 @@ if dialog.getDialogResult == true
 				end
 				
 				output_file = File.join(output_path, "#{report_name}.txt")
+				rr_output_files << output_file
 				
 				# Determine which RegRipper profile to use based on HiveProfileMap.json settings
 				rr_profile = "all"
@@ -253,6 +317,10 @@ if dialog.getDialogResult == true
 				summary_report.each do |report|
 					csv << report
 				end
+			end
+			
+			if ingest_results
+				processResults(rr_output_files, pd, main_progress)
 			end
 			
 			if delete_export
