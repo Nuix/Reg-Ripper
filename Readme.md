@@ -3,7 +3,7 @@ RegRipper
 
 ![Last tested in Nuix 7.4](https://img.shields.io/badge/Nuix-7.4-green.svg)
 
-View the GitHub project [here](https://github.com/NuixSDK/Reg-Ripper) or download the latest release [here](https://github.com/NuixSDK/Reg-Ripper/releases).
+View the GitHub project [here](https://github.com/Nuix/Reg-Ripper) or download the latest release [here](https://github.com/Nuix/Reg-Ripper/releases).
 
 ## Overview
 The RegRipper script will search a case for relevant registry hive files, export the files, and then pass them to RegRipper for processing.
