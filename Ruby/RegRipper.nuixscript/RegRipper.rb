@@ -63,25 +63,13 @@ dialog.validateBeforeClosing do |values|
   end
 	
 	if values["export_path"].strip.empty?
-		CommonDialogs.showWarning("Please provide the Export Path.")
+		CommonDialogs.showWarning("Please provide an Export Path.")
 		next false
-	else
-		export_dir = java.io.File.new(values["export_path"].strip)
-		if !export_dir.exists || !export_dir.isDirectory
-			CommonDialogs.showWarning("Export Path is invalid.")
-			next false
-		end
 	end
 	
 	if values["output_path"].strip.empty?
-		CommonDialogs.showWarning("Please provide the Output Path.")
+		CommonDialogs.showWarning("Please provide an Output Path.")
 		next false
-	else
-		output_dir = java.io.File.new(values["output_path"].strip)
-		if !output_dir.exists || !output_dir.isDirectory
-			CommonDialogs.showWarning("Output Path is invalid.")
-			next false
-		end
 	end
 	
 	next true
@@ -171,6 +159,9 @@ if dialog.getDialogResult == true
 	output_path = input["output_path"]
 	delete_export = input["delete_export"]
 	ingest_results = input["ingest_results"]
+
+	java.io.File.new(export_path).mkdirs
+	java.io.File.new(output_path).mkdirs
 	
 	# Keep track of report files generated to add index to file name in case of duplicate report names
 	report_files = Hash.new
