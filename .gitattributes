@@ -1,0 +1,12 @@
+# Attributes to prevent GitHub from detecting wrong language for repository
+
+# Start by skipping all for language detection
+* linguist-vendored
+
+# Then add back in the extensions we do want it to see
+*.rb linguist-vendored=false
+*.rb_ linguist-vendored=false
+*.java linguist-vendored=false
+*.py linguist-vendored=false
+*.js linguist-vendored=false
+*.java linguist-vendored=false
