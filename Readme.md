@@ -1,7 +1,7 @@
 RegRipper
 =======
 
-![Last tested in Nuix 7.4](https://img.shields.io/badge/Nuix-7.4-green.svg)
+![Last tested in Nuix 9.0](https://img.shields.io/badge/Nuix-9.0-green.svg)
 
 View the GitHub project [here](https://github.com/Nuix/Reg-Ripper) or download the latest release [here](https://github.com/Nuix/Reg-Ripper/releases).
 
@@ -9,7 +9,7 @@ View the GitHub project [here](https://github.com/Nuix/Reg-Ripper) or download t
 The RegRipper script will search a case for relevant registry hive files, export the files, and then pass them to RegRipper for processing.
 
 ## Prerequisites
-Download and extract [RegRipper](https://github.com/keydet89/RegRipper2.8)
+Download and extract [RegRipper](https://github.com/keydet89/RegRipper3.0)
 
 ## Setup
 
@@ -55,7 +55,7 @@ The script will also generate a summary report (summary_report.csv) in the outpu
 # License
 
 ```
-Copyright 2018 Nuix
+Copyright 2021 Nuix
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
