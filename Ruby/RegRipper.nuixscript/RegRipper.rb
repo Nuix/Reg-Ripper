@@ -24,11 +24,16 @@ NuixConnection.setUtilities($utilities)
 NuixConnection.setCurrentNuixVersion(NUIX_VERSION)
 
 # Search case for registry hive items
-search_query = "mime-type:application/vnd.ms-registry AND NOT name:( sav OR old OR log* ) AND " +
-"((path-name:Windows/System32/config AND name:( sam OR security OR software OR system OR default )) OR " +
-"(path-name:( AppData/Roaming/Microsoft/Windows OR AppData/Local/Microsoft/Windows OR \"Local Settings/Application Data/Microsoft/Windows\") AND name:USRCLASS.DAT) OR " +
-"(path-name:( (Users OR \"Documents and Settings\" OR Windows/system32/config/systemprofile OR Windows/ServiceProfiles/LocalService OR Windows/ServiceProfiles/NetworkService) AND NOT windows/users ) AND name:ntuser.dat) OR " +
-"(path-name:Windows/AppCompat/Programs AND name:Amcache.hve))"
+
+# OLD QUERY
+# search_query = "mime-type:application/vnd.ms-registry AND NOT name:( sav OR old OR log* ) AND " +
+# "((path-name:Windows/System32/config AND name:( sam OR security OR software OR system OR default )) OR " +
+# "(path-name:( AppData/Roaming/Microsoft/Windows OR AppData/Local/Microsoft/Windows OR \"Local Settings/Application Data/Microsoft/Windows\") AND name:USRCLASS.DAT) OR " +
+# "(path-name:( (Users OR \"Documents and Settings\" OR Windows/system32/config/systemprofile OR Windows/ServiceProfiles/LocalService OR Windows/ServiceProfiles/NetworkService) AND NOT windows/users ) AND name:ntuser.dat) OR " +
+# "(path-name:Windows/AppCompat/Programs AND name:Amcache.hve))"
+
+# NEW QUERY
+search_query = "mime-type:application/vnd.ms-registry"
 
 # Load HiveProfileMap
 hive_profile = JSON.parse(File.read(File.join($script_directory,"HiveProfileMap.json")))
