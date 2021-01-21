@@ -9,7 +9,7 @@ View the GitHub project [here](https://github.com/Nuix/Reg-Ripper) or download t
 The RegRipper script will search a case for relevant registry hive files, export the files, and then pass them to RegRipper for processing.
 
 ## Prerequisites
-Download and extract [RegRipper](https://github.com/keydet89/RegRipper3.0)
+This script makes use of RegRipper. Download [RegRipper](https://github.com/keydet89/RegRipper3.0) from the repository and then place into a directory.  Provide this directory for the setting **RegRipper Installation Path** when running the script.
 
 ## Setup
 
