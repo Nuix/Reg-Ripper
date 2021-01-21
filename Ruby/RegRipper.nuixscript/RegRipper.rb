@@ -3,7 +3,6 @@ require File.join($script_directory,"Nx.jar")
 java_import "com.nuix.nx.NuixConnection"
 java_import "com.nuix.nx.LookAndFeelHelper"
 java_import "com.nuix.nx.dialogs.ChoiceDialog"
-java_import "com.nuix.nx.dialogs.CustomDialog"
 java_import "com.nuix.nx.dialogs.TabbedCustomDialog"
 java_import "com.nuix.nx.dialogs.CommonDialogs"
 java_import "com.nuix.nx.dialogs.ProgressDialog"
